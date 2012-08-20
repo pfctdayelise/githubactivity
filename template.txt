@@ -3,7 +3,9 @@ For the ${period} days ending ${end}
 
 % if commits:
 ==Commits==
-${commits}
+% for commit in commits:
+    ${commit.timestamp} ${commit.author}: ${commit.message}
+% endfor
 % endif
 
 % if pullrequestsopen or pullrequestsclosed:
@@ -25,7 +27,7 @@ ${pullrequestsclosed}
 ===Submitted===
 ${issuessubmitted}
 % endif
-% if issuesactvity:
+% if issuesactivity:
 ===Activity===
 ${issuesactivity}
 % endif

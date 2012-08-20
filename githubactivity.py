@@ -25,12 +25,6 @@ class Commit(object):
     def timestamp(self):
         return self._commit.commit.author.date.strftime(dateStamp)
 
-    @classmethod
-    def strList(cls, commits, reportNoActivity):
-        if not commits and reportNoActivity:
-            return "No recent commits!"
-        return '\n'.join('{0.timestamp} {0.author}: {0.message}'.format(c) for c in commits)
-
 
 def getRecentCommits(repo, start, end, reportNoActivity):
     """
@@ -48,8 +42,9 @@ def getRecentCommits(repo, start, end, reportNoActivity):
         if ts < end:
             # end might be specified, i.e. in the past
             recentCommits.append(Commit(commit))
-    s = Commit.strList(recentCommits, reportNoActivity)
-    return s
+    if not recentCommits and reportNoActivity:
+        return 'No recent commits!'
+    return recentCommits
 
 
 def getPullRequestsOpen(repo, reportNoActivity):
@@ -88,7 +83,7 @@ def getWikiActivity(repo, reportNoActivity):
     return ''
 
 
-def getRepoActivity(org, repo, days=None, end=None, reportNoActivity=True):
+def getRepoActivity(org, repo, days=None, end=None, reportNoActivity=None):
     """
     @param org: a string representing an organization
     @param repo: a string representing a repo
@@ -101,6 +96,8 @@ def getRepoActivity(org, repo, days=None, end=None, reportNoActivity=True):
         days = 7
     if not end:
         end = datetime.datetime.today()
+    if reportNoActivity is None:
+        reportNoActivity = True
     period = datetime.timedelta(days=days)
     start = end - period
 
