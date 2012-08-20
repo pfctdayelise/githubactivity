@@ -1,6 +1,7 @@
 import datetime
 import argparse
 from github import Github
+from mako.template import Template
 
 dateStamp = '%Y-%m-%d'
 
@@ -101,23 +102,22 @@ def getRepoActivity(org, repo, days=None, end=None):
     issuesClosed = getIssuesClosed(repository)
     wiki = getWikiActivity(repository)
 
-    with open('template.txt') as f:
-        template =  f.read()
-        contents = {
-            'repo': repo,
-            'org': org,
-            'period': period.days,
-            'end': end.strftime('%Y-%m-%d'),
-            'commits': commits,
-            'pullrequestsopen': pullReqOpen,
-            'pullrequestsclosed': pullReqClosed,
-            'issuessubmitted': issuesSubmitted,
-            'issuesactivity': issuesActivity,
-            'issuesclosed': issuesClosed,
-            'wiki': wiki,
-        }
-        result = template.format(**contents)
-        return result
+    template = Template(filename='template.txt')
+    contents = {
+        'repo': repo,
+        'org': org,
+        'period': period.days,
+        'end': end.strftime('%Y-%m-%d'),
+        'commits': commits,
+        'pullrequestsopen': pullReqOpen,
+        'pullrequestsclosed': pullReqClosed,
+        'issuessubmitted': issuesSubmitted,
+        'issuesactivity': issuesActivity,
+        'issuesclosed': issuesClosed,
+        'wiki': wiki,
+    }
+    result = template.render(**contents)
+    return result
 
 
 def dateObject(s):
