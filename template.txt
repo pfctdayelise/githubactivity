@@ -13,11 +13,16 @@ For the ${period} days ending ${end}
 % endif
 % if pullrequestsopen:
 ===Open===
-${pullrequestsopen}
+% for pull in pullrequestsopen:
+    ${pull.author}: ${pull.title}
+% endfor
+
 % endif
 % if pullrequestsclosed:
 ===Recently closed===
-${pullrequestsclosed}
+% for pull in pullrequestsclosed:
+    ${pull.closedTimestamp} ? closed ${pull.author}: ${pull.title}
+% endfor
 % endif
 
 % if issuessubmitted or issuesactivity or issuesclosed:
