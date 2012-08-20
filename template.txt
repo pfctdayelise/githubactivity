@@ -1,19 +1,40 @@
 Github activity for repo ${repo} by organization ${org}
 For the ${period} days ending ${end}
 
+% if commits:
 ==Commits==
 ${commits}
+% endif
+
+% if pullrequestsopen or pullrequestsclosed:
 ==Pull requests==
+% endif
+% if pullrequestsopen:
 ===Open===
 ${pullrequestsopen}
+% endif
+% if pullrequestsclosed:
 ===Recently closed===
 ${pullrequestsclosed}
+% endif
+
+% if issuessubmitted or issuesactivity or issuesclosed:
 ==Issues==
+% endif
+% if issuessubmitted:
 ===Submitted===
 ${issuessubmitted}
+% endif
+% if issuesactvity:
 ===Activity===
 ${issuesactivity}
+% endif
+% if issuesclosed:
 ===Closed===
 ${issuesclosed}
+% endif
+
+% if wiki:
 ==Wiki==
 ${wiki}
+% endif

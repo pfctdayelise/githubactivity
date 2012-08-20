@@ -26,13 +26,13 @@ class Commit(object):
         return self._commit.commit.author.date.strftime(dateStamp)
 
     @classmethod
-    def strList(cls, commits):
-        if not commits:
+    def strList(cls, commits, reportNoActivity):
+        if not commits and reportNoActivity:
             return "No recent commits!"
         return '\n'.join('{0.timestamp} {0.author}: {0.message}'.format(c) for c in commits)
 
 
-def getRecentCommits(repo, start, end):
+def getRecentCommits(repo, start, end, reportNoActivity):
     """
     @param repo: a GitRepo object
     @return: string
@@ -48,40 +48,53 @@ def getRecentCommits(repo, start, end):
         if ts < end:
             # end might be specified, i.e. in the past
             recentCommits.append(Commit(commit))
-    s = Commit.strList(recentCommits)
+    s = Commit.strList(recentCommits, reportNoActivity)
     return s
 
 
-def getPullRequestsOpen(repo):
+def getPullRequestsOpen(repo, reportNoActivity):
+    if reportNoActivity:
+        return 'No open pull requests.'
     return ''
 
 
-def getPullRequestsClosed(repo):
+def getPullRequestsClosed(repo, reportNoActivity):
+    if reportNoActivity:
+        return 'No closed pull requests.'
     return ''
 
 
-def getIssuesSubmitted(repo):
+def getIssuesSubmitted(repo, reportNoActivity):
+    if reportNoActivity:
+        return 'No issues submitted.'
     return ''
 
 
-def getIssuesActivity(repo):
+def getIssuesActivity(repo, reportNoActivity):
+    if reportNoActivity:
+        return 'No activity on issues.'
     return ''
 
 
-def getIssuesClosed(repo):
+def getIssuesClosed(repo, reportNoActivity):
+    if reportNoActivity:
+        return 'No issues closed.'
     return ''
 
 
-def getWikiActivity(repo):
+def getWikiActivity(repo, reportNoActivity):
+    if reportNoActivity:
+        return 'No wiki activity.'
     return ''
 
 
-def getRepoActivity(org, repo, days=None, end=None):
+def getRepoActivity(org, repo, days=None, end=None, reportNoActivity=True):
     """
     @param org: a string representing an organization
     @param repo: a string representing a repo
     @param days: optional, int
     @param end: optional, datetime object
+    @param reportNoActivity: bool, explicitly report when there has been no activity?
     @return: string
     """
     if not days:
@@ -94,13 +107,13 @@ def getRepoActivity(org, repo, days=None, end=None):
     g = Github()
     repository = g.get_organization(org).get_repo(repo)
     
-    commits = getRecentCommits(repository, start, end)
-    pullReqOpen = getPullRequestsOpen(repository)
-    pullReqClosed = getPullRequestsClosed(repository)
-    issuesSubmitted = getIssuesSubmitted(repository)
-    issuesActivity = getIssuesActivity(repository)
-    issuesClosed = getIssuesClosed(repository)
-    wiki = getWikiActivity(repository)
+    commits = getRecentCommits(repository, start, end, reportNoActivity)
+    pullReqOpen = getPullRequestsOpen(repository, reportNoActivity)
+    pullReqClosed = getPullRequestsClosed(repository, reportNoActivity)
+    issuesSubmitted = getIssuesSubmitted(repository, reportNoActivity)
+    issuesActivity = getIssuesActivity(repository, reportNoActivity)
+    issuesClosed = getIssuesClosed(repository, reportNoActivity)
+    wiki = getWikiActivity(repository, reportNoActivity)
 
     template = Template(filename='template.txt')
     contents = {
@@ -133,7 +146,8 @@ if __name__ ==  '__main__':
     parser.add_argument("-o", dest="org", required=True, help="Name of an organization")
     parser.add_argument("-r", dest="repo", required=True, help="Name of a repository")
     parser.add_argument("-d", dest="days", default=None, type=int, help="Number of days to summarise")
-    parser.add_argument("-e", dest="end", default=None, type=dateObject, help="End date")
+    parser.add_argument("-e", dest="end", default=None, type=dateObject, help="End date (in format '{}'".format(dateStamp))
+    parser.add_argument("-n", dest="reportNoActivity", default=None, type=bool, help="Report explicitly if there is no activity")
     args = parser.parse_args()
     r = getRepoActivity(**vars(args))
     print r
