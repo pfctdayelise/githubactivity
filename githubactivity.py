@@ -47,6 +47,49 @@ class PullRequest(object):
         return self._pull.title
 
 
+class Issue(object):
+    def __init__(self, issue):
+        self._issue = issue
+
+    @property
+    def url(self):
+        return self._issue.html_url
+
+    @property
+    def assignee(self):
+        if self._issue.assignee:
+            return self._issue.assignee.login
+        return 'no'
+
+    @property
+    def author(self):
+        return self._issue.user.login
+
+    @property
+    def number(self):
+        return self._issue.number
+
+    @property
+    def title(self):
+        return self._issue.title
+
+    @property
+    def created(self):
+        return issue.created_at.strftime(dateStamp)
+
+    @property
+    def updated(self):
+        return issue.updated_at.strftime(dateStamp)
+
+    @property
+    def closer(self):
+        return issue.closed_by
+
+    @property
+    def closed(self):
+        return issue.closed_at.strftime(dateStamp)
+
+
 def getRecentCommits(repo, start):
     """
     @param repo: a GitRepo object
@@ -81,8 +124,8 @@ def getIssuesSubmitted(repo, start):
     if not repo.has_issues:
         return False
     issues = repo.get_issues()
-
-    return ''
+    issues = [Issue(i) for i in issues if i.updated_at > start]
+    return issues
 
 
 def getIssuesActivity(repo, start):

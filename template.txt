@@ -30,7 +30,9 @@ For the ${period} days ending ${end}
 % endif
 % if issuessubmitted:
 ===Submitted===
-${issuessubmitted}
+% for issue in issuessubmitted:
+    <a href="${issue.url}">#${issue.number}</a> (filed: ${issue.author}, assigned: ${issue.assignee}): ${issue.title}
+% endfor
 % endif
 % if issuesactivity:
 ===Activity===
