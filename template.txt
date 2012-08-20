@@ -2,14 +2,14 @@ Github activity for repo ${repo} by organization ${org}
 For the ${period} days ending ${end}
 
 % if commits:
-==Commits==
+==<a href="https://github.com/${org}/${repo}/commits/">Commits</a>==
 % for commit in commits:
     ${commit.timestamp} ${commit.author}: ${commit.message}
 % endfor
 % endif
 
 % if pullrequestsopen or pullrequestsclosed:
-==Pull requests==
+==<a href="https://github.com/${org}/${repo}/pulls">Pull requests</a>==
 % endif
 % if pullrequestsopen:
 ===Open===
@@ -21,12 +21,12 @@ For the ${period} days ending ${end}
 % if pullrequestsclosed:
 ===Recently closed===
 % for pull in pullrequestsclosed:
-    ${pull.closedTimestamp} ? closed ${pull.author}: ${pull.title}
+    ${pull.closedTimestamp} ${pull.closer} closed ${pull.author}: ${pull.title}
 % endfor
 % endif
 
 % if issuessubmitted or issuesactivity or issuesclosed:
-==Issues==
+==<a href="https://github.com/${org}/${repo}/issues">Issues</a>==
 % endif
 % if issuessubmitted:
 ===Submitted===

@@ -25,6 +25,7 @@ class Commit(object):
     def timestamp(self):
         return self._commit.commit.author.date.strftime(dateStamp)
 
+
 class PullRequest(object):
     def __init__(self, pull):
         self._pull = pull
