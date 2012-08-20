@@ -1,7 +1,10 @@
 githubactivity
 --------------
 
-*githubactivity* is a script generates a summary report of activity happening on a Github repository.
+*githubactivity* is a script generates a summary report of activity happening on a Github repository. It makes use of the [PyGithub][1] library to read the [Github API][2].
+
+    [1]: http://vincent-jacques.net/PyGithub/
+    [2]: http://developer.github.com/v3/
 
 Run via the command line:
 
