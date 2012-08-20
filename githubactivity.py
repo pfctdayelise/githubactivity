@@ -78,6 +78,10 @@ def getPullRequestsClosed(repo, start):
 
 
 def getIssuesSubmitted(repo, start):
+    if not repo.has_issues:
+        return False
+    issues = repo.get_issues()
+
     return ''
 
 
@@ -116,12 +120,9 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
     commits = getRecentCommits(repository, start)
     pullReqOpen = getPullRequestsOpen(repository)
     pullReqClosed = getPullRequestsClosed(repository, start)
-    issuesSubmitted = getIssuesSubmitted(repository, start)
-    issuesActivity = getIssuesActivity(repository, start)
-    issuesClosed = getIssuesClosed(repository, start)
-    wiki = getWikiActivity(repository, start)
+    hasIssues = repository.has_issues
+    hasWiki = repository.has_wiki
 
-    template = Template(filename='template.txt')
     contents = {
         'repo': repo,
         'org': org,
@@ -130,11 +131,27 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
         'commits': commits,
         'pullrequestsopen': pullReqOpen,
         'pullrequestsclosed': pullReqClosed,
-        'issuessubmitted': issuesSubmitted,
-        'issuesactivity': issuesActivity,
-        'issuesclosed': issuesClosed,
-        'wiki': wiki,
+        'hasIssues': hasIssues,
+        'hasWiki': hasWiki,
+        'issuessubmitted': None,
+        'issuesactivity': None,
+        'issuesclosed': None,
+        'wiki': None,
     }
+    if hasIssues:
+        issuesSubmitted = getIssuesSubmitted(repository, start)
+        issuesActivity = getIssuesActivity(repository, start)
+        issuesClosed = getIssuesClosed(repository, start)
+        contents.update({
+                'issuessubmitted': issuesSubmitted,
+                'issuesactivity': issuesActivity,
+                'issuesclosed': issuesClosed
+            })
+    if hasWiki:
+        wiki = getWikiActivity(repository, start)
+        contents['wiki'] = wiki
+
+    template = Template(filename='template.txt')
     result = template.render(**contents)
     return result
 

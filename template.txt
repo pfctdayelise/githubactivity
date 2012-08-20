@@ -25,7 +25,7 @@ For the ${period} days ending ${end}
 % endfor
 % endif
 
-% if issuessubmitted or issuesactivity or issuesclosed:
+% if hasIssues:
 ==<a href="https://github.com/${org}/${repo}/issues">Issues</a>==
 % endif
 % if issuessubmitted:
@@ -41,7 +41,7 @@ ${issuesactivity}
 ${issuesclosed}
 % endif
 
-% if wiki:
-==Wiki==
+% if hasWiki:
+==<a href="https://github.com/${org}/${repo}/wiki">Wiki</a>==
 ${wiki}
 % endif
