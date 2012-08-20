@@ -1,0 +1,19 @@
+Github activity for repo {repo} by organization {org}
+For the {period} days ending {end}
+
+==Commits==
+{commits}
+==Pull requests==
+===Open===
+{pullrequestsopen}
+===Recently closed===
+{pullrequestsclosed}
+==Issues==
+===Submitted===
+{issuessubmitted}
+===Activity===
+{issuesactivity}
+===Closed===
+{issuesclosed}
+==Wiki==
+{wiki}
