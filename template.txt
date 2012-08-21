@@ -26,21 +26,19 @@ For the ${period} days ending ${end}
 % endif
 
 % if hasIssues:
-==<a href="https://github.com/${org}/${repo}/issues">Issues</a>==
+==Issues==
 % endif
-% if issuessubmitted:
-===Submitted===
-% for issue in issuessubmitted:
-    <a href="${issue.url}">#${issue.number}</a> (filed: ${issue.author}, assigned: ${issue.assignee}): ${issue.title}
+% if issuesupdated:
+===New/updated===
+% for issue in issuesupdated:
+    <a href="${issue.url}">#${issue.number}</a> (filed: ${issue.author}, assigned: ${issue.assignee}): ${issue.title} (${issue.timestamp})
 % endfor
-% endif
-% if issuesactivity:
-===Activity===
-${issuesactivity}
 % endif
 % if issuesclosed:
 ===Closed===
-${issuesclosed}
+% for issue in issuesclosed:
+    <a href="${issue.url}">#${issue.number}</a>: ${issue.title} (closed ${issue.closed} by ${issue.closer})
+% endfor
 % endif
 
 % if hasWiki:

@@ -74,20 +74,26 @@ class Issue(object):
         return self._issue.title
 
     @property
+    def timestamp(self):
+        if self.created == self.updated:
+            return 'new {}'.format(self.created)
+        return 'updated {}'.format(self.updated)
+
+    @property
     def created(self):
-        return issue.created_at.strftime(dateStamp)
+        return self._issue.created_at.strftime(dateStamp)
 
     @property
     def updated(self):
-        return issue.updated_at.strftime(dateStamp)
+        return self._issue.updated_at.strftime(dateStamp)
 
     @property
     def closer(self):
-        return issue.closed_by
+        return self._issue.closed_by.login
 
     @property
     def closed(self):
-        return issue.closed_at.strftime(dateStamp)
+        return self._issue.closed_at.strftime(dateStamp)
 
 
 def getRecentCommits(repo, start):
@@ -120,20 +126,18 @@ def getPullRequestsClosed(repo, start):
     return pulls
 
 
-def getIssuesSubmitted(repo, start):
+def getIssuesUpdated(repo, start):
     if not repo.has_issues:
         return False
-    issues = repo.get_issues()
-    issues = [Issue(i) for i in issues if i.updated_at > start]
+    issues = [Issue(i) for i in repo.get_issues(state='open', sort='updated', since=start)]
     return issues
 
 
-def getIssuesActivity(repo, start):
-    return ''
-
-
 def getIssuesClosed(repo, start):
-    return ''
+    if not repo.has_issues:
+        return False
+    issues = [Issue(i) for i in repo.get_issues(state='closed', sort='updated', since=start)]
+    return issues
 
 
 def getWikiActivity(repo, start):
@@ -182,12 +186,10 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
         'wiki': None,
     }
     if hasIssues:
-        issuesSubmitted = getIssuesSubmitted(repository, start)
-        issuesActivity = getIssuesActivity(repository, start)
+        issuesUpdated = getIssuesUpdated(repository, start)
         issuesClosed = getIssuesClosed(repository, start)
         contents.update({
-                'issuessubmitted': issuesSubmitted,
-                'issuesactivity': issuesActivity,
+                'issuesupdated': issuesUpdated,
                 'issuesclosed': issuesClosed
             })
     if hasWiki:
