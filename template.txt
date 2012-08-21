@@ -1,3 +1,4 @@
+<html>
 <div id="githubsummary">
 <h1>Github activity for ${org}/${repo}</h1>
 <p id="subtitle">For the ${period} days ending ${end}</p>
@@ -73,3 +74,4 @@
 % endif
 
 </div>
+</html>
