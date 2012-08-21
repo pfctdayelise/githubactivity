@@ -31,7 +31,7 @@ For the ${period} days ending ${end}
 % if issuesupdated:
 ===New/updated===
 % for issue in issuesupdated:
-    <a href="${issue.url}">#${issue.number}</a> (filed: ${issue.author}, assigned: ${issue.assignee}): ${issue.title} (${issue.timestamp})
+    <a href="${issue.url}">#${issue.number}</a> (filed: ${issue.author}, assigned: ${issue.assignee}): ${issue.title} (${issue.timestamp}) - ${issue.commentSummary}
 % endfor
 % endif
 % if issuesclosed:

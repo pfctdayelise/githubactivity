@@ -95,6 +95,20 @@ class Issue(object):
     def closed(self):
         return self._issue.closed_at.strftime(dateStamp)
 
+    @property
+    def comments(self):
+        return list(self._issue.get_comments())
+
+    @property
+    def commentSummary(self):
+        totalComments = len(self.comments)
+        if totalComments == 0:
+            return 'No comments'
+        if totalComments == 1:
+            return '1 comment'
+        else:
+            return '{} comments'.format(totalComments)
+
 
 def getRecentCommits(repo, start):
     """
