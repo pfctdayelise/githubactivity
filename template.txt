@@ -1,42 +1,75 @@
-Github activity for repo ${repo} by organization ${org}
-For the ${period} days ending ${end}
+<div id="githubsummary">
+<h1>Github activity for ${org}/${repo}</h1>
+<p id="subtitle">For the ${period} days ending ${end}</p>
+
+<p id="toc">
+<ul>
+% if commits:
+  <li><a href="#commits">Commits</a></li>
+% endif
+% if pullrequestsopen or pullrequestsclosed:
+  <li><a href="#pullrequests">Pull requests</a></li>
+% endif
+% if hasIssues:
+  <li><a href="#issues">Issues</a></li>
+% endif
+</ul>
+</p>
 
 % if commits:
-==<a href="https://github.com/${org}/${repo}/commits/">Commits</a>==
+<div id="commits">
+<h2><a href="https://github.com/${org}/${repo}/commits/">Commits</a></h2>
+<ul>
 % for commit in commits:
-    ${commit.timestamp} ${commit.author}: ${commit.message}
+    <li> <span class="timestamp">${commit.timestamp}</span> <span class="user">${commit.author}</span>: <span class="description">${commit.message}</span></li>
 % endfor
+</ul>
+</div>
 % endif
 
 % if pullrequestsopen or pullrequestsclosed:
-==<a href="https://github.com/${org}/${repo}/pulls">Pull requests</a>==
+<div id="pullrequests">
+<h2><a href="https://github.com/${org}/${repo}/pulls">Pull requests</a></h2>
 % endif
 % if pullrequestsopen:
-===Open===
+<h3>Open</h3>
+<ul>
 % for pull in pullrequestsopen:
-    ${pull.author}: ${pull.title}
+    <li><span class="user">${pull.author}</span>: <span class="description">${pull.title}</span></li>
 % endfor
-
+</ul>
 % endif
+
 % if pullrequestsclosed:
-===Recently closed===
+<h3>Recently closed</h3>
+<ul>
 % for pull in pullrequestsclosed:
-    ${pull.closedTimestamp} ${pull.closer} closed ${pull.author}: ${pull.title}
+    <li><span class="timestamp">${pull.closedTimestamp}</span> <span class="user">${pull.closer}</span> closed <span class="user">${pull.author}</span>: <span class="description">${pull.title}</span></li>
 % endfor
+</ul>
+</div>
 % endif
 
 % if hasIssues:
-==Issues==
+<div id="issues">
+<h2>Issues</h2>
 % endif
 % if issuesupdated:
-===New/updated===
+<h3>New/updated</h3>
+<ul>
 % for issue in issuesupdated:
-    <a href="${issue.url}">#${issue.number}</a> (filed: ${issue.author}, assigned: ${issue.assignee}): ${issue.title} (${issue.timestamp}) - ${issue.commentSummary}
+    <li><a href="${issue.url}">#${issue.number}</a> (filed: <span class="user">${issue.author}</span>, assigned: <span class="user">${issue.assignee}</span>): <span class="description">${issue.title}</span> (<span class="timestamp">${issue.timestamp}</span>) - ${issue.commentSummary}</li>
 % endfor
+</ul>
 % endif
 % if issuesclosed:
-===Closed===
+<h3>Closed</h3>
+<ul>
 % for issue in issuesclosed:
-    <a href="${issue.url}">#${issue.number}</a>: ${issue.title} (closed ${issue.closed} by ${issue.closer})
+    <li><a href="${issue.url}">#${issue.number}</a>: <span class="description">${issue.title}</span> (closed <span class="timestamp">${issue.closed}</span> by <span class="user">${issue.closer}</span>)</li>
 % endfor
+</ul>
+</div>
 % endif
+
+</div>
