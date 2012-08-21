@@ -29,6 +29,7 @@ class Commit(object):
 class PullRequest(object):
     def __init__(self, pull):
         self._pull = pull
+        self._closer = '?'
 
     @property
     def closedTimestamp(self):
@@ -36,7 +37,11 @@ class PullRequest(object):
 
     @property
     def closer(self):
-        return '?'
+        return self._closer
+
+    def addCloser(self, closer):
+        if closer:
+            self._closer = closer
 
     @property
     def author(self):
@@ -45,6 +50,10 @@ class PullRequest(object):
     @property
     def title(self):
         return self._pull.title
+
+    @property
+    def number(self):
+        return self._pull.number
 
 
 class Issue(object):
@@ -137,7 +146,34 @@ def getPullRequestsOpen(repo):
 def getPullRequestsClosed(repo, start):
     pulls = repo.get_pulls('closed')
     pulls = [PullRequest(p) for p in pulls if start < p.closed_at]
+    closingevents = getPullRequestClosingEvents(repo, start)
+    for pull in pulls:
+        closer = findCloser(pull, closingevents)
+        pull.addCloser(closer)
     return pulls
+
+
+def findCloser(pull, closingevents):
+    closes = [e for e in closingevents if e.payload['number'] == pull.number]
+    if closes == []:
+        # somehow couldn't find one
+        return None
+    # can be more than one if a pull request is reopened
+    lastClose = max(closes, key=lambda e: e.created_at)
+    return lastClose.actor.login
+
+
+def getPullRequestClosingEvents(repo, start):
+    closingevents = []
+    for event in repo.get_events():
+        if event.created_at < start:
+            break
+        if event.type != 'PullRequestEvent':
+            continue
+        if event.payload['action'] != 'closed':
+            continue
+        closingevents.append(event)
+    return closingevents
 
 
 def getIssuesUpdated(repo, start):
