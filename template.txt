@@ -40,8 +40,3 @@ For the ${period} days ending ${end}
     <a href="${issue.url}">#${issue.number}</a>: ${issue.title} (closed ${issue.closed} by ${issue.closer})
 % endfor
 % endif
-
-% if hasWiki:
-==<a href="https://github.com/${org}/${repo}/wiki">Wiki</a>==
-${wiki}
-% endif

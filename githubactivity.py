@@ -154,10 +154,6 @@ def getIssuesClosed(repo, start):
     return issues
 
 
-def getWikiActivity(repo, start):
-    return ''
-
-
 def getRepoActivity(org, repo, days=None, reportNoActivity=None):
     """
     @param org: a string representing an organization
@@ -182,7 +178,6 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
     pullReqOpen = getPullRequestsOpen(repository)
     pullReqClosed = getPullRequestsClosed(repository, start)
     hasIssues = repository.has_issues
-    hasWiki = repository.has_wiki
 
     contents = {
         'repo': repo,
@@ -193,11 +188,9 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
         'pullrequestsopen': pullReqOpen,
         'pullrequestsclosed': pullReqClosed,
         'hasIssues': hasIssues,
-        'hasWiki': hasWiki,
         'issuessubmitted': None,
         'issuesactivity': None,
         'issuesclosed': None,
-        'wiki': None,
     }
     if hasIssues:
         issuesUpdated = getIssuesUpdated(repository, start)
@@ -206,9 +199,6 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
                 'issuesupdated': issuesUpdated,
                 'issuesclosed': issuesClosed
             })
-    if hasWiki:
-        wiki = getWikiActivity(repository, start)
-        contents['wiki'] = wiki
 
     template = Template(filename='template.txt')
     result = template.render(**contents)
