@@ -1,2 +1,2 @@
-PyGithub==1.4
-Mako==0.7.2
+PyGithub==1.13.1
+Mako==0.7.3

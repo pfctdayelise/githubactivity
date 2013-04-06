@@ -2,6 +2,11 @@ import datetime
 import argparse
 from github import Github
 from mako.template import Template
+# ahem hack to cope with printing utf8
+# http://stackoverflow.com/a/1169209/54056
+import sys
+import codecs
+sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 dateStamp = '%Y-%m-%d'
 
@@ -190,7 +195,7 @@ def getIssuesClosed(repo, start):
     return issues
 
 
-def getRepoActivity(org, repo, days=None, reportNoActivity=None):
+def getRepoActivity(org, repo, days=None, reportNoActivity=True, username=None, password=None):
     """
     @param org: a string representing an organization
     @param repo: a string representing a repo
@@ -201,15 +206,16 @@ def getRepoActivity(org, repo, days=None, reportNoActivity=None):
     """
     if not days:
         days = 7
-    if reportNoActivity is None:
-        reportNoActivity = True
     end = datetime.datetime.today()
     period = datetime.timedelta(days=days)
     start = end - period
 
-    g = Github()
+    if username and password:
+        g = Github(login_or_token=username, password=password)
+    else:
+        g = Github()
     repository = g.get_organization(org).get_repo(repo)
-    
+
     commits = getRecentCommits(repository, start)
     pullReqOpen = getPullRequestsOpen(repository)
     pullReqClosed = getPullRequestsClosed(repository, start)
@@ -249,13 +255,17 @@ def dateObject(s):
         raise argparse.ArgumentTypeError(msg)
     return d
 
+
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description="Print out a summary of Github activity")
     parser.add_argument("-o", dest="org", required=True, help="Name of an organization")
     parser.add_argument("-r", dest="repo", required=True, help="Name of a repository")
     parser.add_argument("-d", dest="days", default=None, type=int, help="Number of days to summarise")
 #    parser.add_argument("-e", dest="end", default=None, type=dateObject, help="End date (in format '{}'".format(dateStamp))
-    parser.add_argument("-n", dest="reportNoActivity", default=None, type=bool, help="Report explicitly if there is no activity")
+    parser.add_argument('--reportNoActivity', '-n', action="store_true", default=False, help="Report explicitly if there is no activity")
+    parser.add_argument("-u", dest="username", required=False, help="Github username (authenticating increases the rate limit for hitting the Github API)")
+    parser.add_argument("-p", dest="password", required=False, help="Github password")
     args = parser.parse_args()
     r = getRepoActivity(**vars(args))
     print r
+
